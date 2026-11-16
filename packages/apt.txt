@@ -14,11 +14,6 @@ ncdu			# shows what takes up space inside a folder
 dysk			# shows how full the mounted drives are
 fastfetch		# shows the system's details next to the Debian logo
 
-# Terminal and files
-neovim
-yazi			# terminal file manager, from yazi's own repository
-trash-cli		# yazi's g T empties the trash
-
 # Remote work
 mosh
 tailscale tailscale-archive-keyring	# from Tailscale's own repository

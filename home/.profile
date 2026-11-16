@@ -26,5 +26,5 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-export EDITOR=nvim
-export VISUAL=nvim
+export EDITOR=vi
+export VISUAL=vi

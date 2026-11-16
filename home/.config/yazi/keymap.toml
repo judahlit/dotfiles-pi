@@ -1,4 +1,0 @@
-[[mgr.prepend_keymap]]
-on   = ["g", "T"]
-run  = 'shell "trash-empty" --block'
-desc = "Empty the trash"
