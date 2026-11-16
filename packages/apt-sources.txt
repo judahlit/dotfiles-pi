@@ -1,0 +1,5 @@
+# apt repositories outside Debian, one per line: a name, the URL of the signing key, and the
+# source line from the repository's install guide. The name becomes the file name in
+# /etc/apt/sources.list.d/, and signed-by sets where the key goes.
+
+tailscale  https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg  deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian trixie main

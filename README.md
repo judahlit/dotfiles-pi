@@ -24,18 +24,12 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
    stow --no-folding -d ~/dotfiles-pi -t ~ home
    exec bash
    ```
-4. Add the apt repositories of Tailscale and yazi:
-   ```sh
-   curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg > /dev/null
-   curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list > /dev/null
-   curl -fsSL https://yazi-rs.github.io/builds/yazi-keyring.gpg | sudo tee /usr/share/keyrings/yazi-keyring.gpg > /dev/null
-   echo 'deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg] https://yazi-rs.github.io/builds/ stable main' | sudo tee /etc/apt/sources.list.d/yazi.list > /dev/null
-   ```
-5. Install the packages in `packages/apt.txt`:
+4. Add the apt repositories in `packages/apt-sources.txt` and install the packages in
+   `packages/apt.txt`. One command does both:
    ```sh
    apt-install
    ```
-6. Join the tailnet. The command prints a link to log in with:
+5. Join the tailnet. The command prints a link to log in with:
    ```sh
    sudo tailscale up
    ```
@@ -44,6 +38,10 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
 
 After a change to `home/`, run `run-stow` to link new files. `update` upgrades the
 packages.
+
+`apt-install` also removes what was deleted from the two lists since its last run: a
+repository at once, and a package unless another package needs it. It keeps a record of
+each run in `~/.local/state/dotfiles-pi/`. Without a record, it removes nothing.
 
 To change the host name later, also change it in `/etc/hosts`. It must match the host
 name, or `sudo` warns that it cannot resolve the host:
