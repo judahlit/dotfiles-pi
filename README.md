@@ -33,11 +33,30 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
    ```sh
    sudo tailscale up
    ```
+6. Install Pi-hole, which has no apt package:
+   ```sh
+   curl -sSL https://install.pi-hole.net -o basic-install.sh
+   sudo bash basic-install.sh
+   ```
+   In the installer, continue at the static IP notice: the tailnet reaches the Pi at its
+   Tailscale address, which does not change. Choose the interface `tailscale0`, the upstream
+   "Quad9 (filtered, DNSSEC)", query logging on, and "Show everything". Note the admin
+   password at the end, or set a new one with `sudo pihole setpassword`.
+7. Make Pi-hole the tailnet's DNS server. By default, Pi-hole answers only devices on its
+   own subnet, so let it answer all of them. Then stop the Pi from sending its own lookups
+   to the tailnet's DNS, which would be Pi-hole again:
+   ```sh
+   sudo pihole-FTL --config dns.listeningMode ALL
+   sudo tailscale set --accept-dns=false
+   ```
+   In the Tailscale admin console, open DNS. Add a custom nameserver with the Pi's address
+   from `tailscale ip -4`, and turn on "Override DNS servers". To test, run
+   `dig +short doubleclick.net` on another tailnet device. It prints `0.0.0.0`.
 
 ## Maintenance
 
 After a change to `home/`, run `run-stow` to link new files. `update` upgrades the
-packages.
+packages. Pi-hole is not an apt package: `pihole -up` updates it.
 
 `apt-install` also removes what was deleted from the two lists since its last run: a
 repository at once, and a package unless another package needs it. It keeps a record of
