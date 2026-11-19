@@ -40,7 +40,8 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
    services-up
    ```
    It creates Forgejo's secret key, starts the containers, and publishes them with Tailscale
-   Serve. The aliases `pihole` and `forgejo` run those commands inside their containers.
+   Serve. It also installs a timer that copies their data to `/srv/backup` every night at
+   04:00. The aliases `pihole` and `forgejo` run those commands inside their containers.
    Forgejo is then at `https://pi.tail87bfdc.ts.net/`, and Pi-hole's web page at
    `https://pi.tail87bfdc.ts.net:8443/admin/`.
 7. Set the password of Pi-hole's web page:
@@ -70,6 +71,13 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
        User git
    ```
    To test, run `ssh -T forge` on the laptop. Forgejo answers with a greeting.
+10. Let the PC fetch the nightly copies. The PC uses its own key without a passphrase, so
+    limit that key to reading `/srv/backup`. Add this line to `~/.ssh/authorized_keys` on the
+    Pi, as one line. Replace `<the PC's key>` with the text of `~/.ssh/pi-backup.pub` on
+    the PC:
+    ```
+    command="rrsync -ro /srv/backup",restrict <the PC's key>
+    ```
 
 ## Maintenance
 
@@ -77,8 +85,9 @@ After a change to `home/`, run `run-stow` to link new files. `update` upgrades t
 apt packages, but not the containers.
 
 Each service in `compose/` has its settings in its `compose.yaml`, and its data in
-`/srv/<service>`. `services-up` updates the services to their newest images, and applies
-a change to a `compose.yaml`. Forgejo follows its LTS series, with security fixes until
+`/srv/<service>`. `scripts/backup.sh` says how to restore the nightly copy of that data.
+`services-up` updates the services to their newest images, and applies a change to a
+`compose.yaml`. Forgejo follows its LTS series, with security fixes until
 15 July 2027. Before that date, change its image tag in `compose/forgejo/compose.yaml` to
 the next LTS series on [its release page](https://codeberg.org/forgejo/forgejo/releases).
 

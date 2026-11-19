@@ -1,0 +1,8 @@
+[Unit]
+Description=Copy the services' data to /srv/backup
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pi-backup

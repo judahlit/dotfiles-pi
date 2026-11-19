@@ -4,6 +4,7 @@
 # Network
 nmap			# finds the devices on the network
 wakeonlan		# wakes the PC
+rsync			# its rrsync limits the PC's backup key to /srv/backup
 
 # For this repository
 git stow
