@@ -8,10 +8,10 @@ cd "$(dirname "$0")/../compose"
 # Forgejo runs as user 1000, and Docker would create a missing folder as root.
 sudo install -d -o 1000 -g 1000 -m 700 /srv/forgejo
 # Without a secret key, Forgejo uses a fixed one that is in its public source code.
-sudo test -e /srv/forgejo/secret_key ||
-	sudo docker compose -f forgejo/compose.yaml run --rm -T --entrypoint forgejo forgejo \
-		generate secret SECRET_KEY |
-	sudo install -o 1000 -g 1000 -m 600 /dev/stdin /srv/forgejo/secret_key
+if ! sudo test -s /srv/forgejo/secret_key; then
+	key=$(openssl rand -hex 32)
+	echo "$key" | sudo install -o 1000 -g 1000 -m 600 /dev/stdin /srv/forgejo/secret_key
+fi
 
 for service in */; do
 	sudo docker compose -f "${service}compose.yaml" up -d --pull always --remove-orphans
