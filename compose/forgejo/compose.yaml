@@ -1,0 +1,27 @@
+# Forgejo, the git server. Its repositories, database, settings and secrets are in /srv/forgejo.
+# Each FORGEJO__<section>__<key> variable sets that key in its app.ini at every start.
+services:
+  forgejo:
+    # The LTS series, with security fixes until 15 July 2027.
+    image: codeberg.org/forgejo/forgejo:15-rootless
+    container_name: forgejo
+    user: 1000:1000
+    ports:
+      # Tailscale Serve publishes both to the tailnet: the web page over HTTPS, and SSH as is.
+      - 127.0.0.1:3000:3000
+      - 127.0.0.1:2222:2222
+    environment:
+      FORGEJO__server__DOMAIN: pi.tail87bfdc.ts.net
+      FORGEJO__server__ROOT_URL: https://pi.tail87bfdc.ts.net/
+      FORGEJO__server__SSH_DOMAIN: pi.tail87bfdc.ts.net
+      FORGEJO__server__SSH_PORT: 2222
+      FORGEJO__server__OFFLINE_MODE: "true"
+      # Skips the web installer: the settings are here.
+      FORGEJO__security__INSTALL_LOCK: "true"
+      # scripts/services.sh creates this file. Forgejo makes its other secrets itself.
+      FORGEJO__security__SECRET_KEY_URI: file:/var/lib/gitea/secret_key
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+    volumes:
+      - /srv/forgejo:/var/lib/gitea
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped

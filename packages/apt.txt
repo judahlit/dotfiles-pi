@@ -18,6 +18,9 @@ fastfetch		# shows the system's details next to the Debian logo
 mosh
 tailscale tailscale-archive-keyring	# from Tailscale's own repository
 
+# Services: the containers in compose/
+docker-ce docker-ce-cli containerd.io docker-compose-plugin	# from Docker's own repository
+
 # Security
 unattended-upgrades	# for automatic security updates
 debian-security-support	# warns when a package has limited security support

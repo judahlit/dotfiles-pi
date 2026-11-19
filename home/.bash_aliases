@@ -11,3 +11,8 @@ alias update='~/dotfiles-pi/scripts/update.sh'
 alias apt-install='~/dotfiles-pi/scripts/apt.sh'
 alias apt-list='$EDITOR "$HOME/dotfiles-pi/packages/apt.txt"'
 alias apt-sources-list='$EDITOR "$HOME/dotfiles-pi/packages/apt-sources.txt"'
+
+# services
+alias services-up='~/dotfiles-pi/scripts/services.sh'
+alias forgejo='sudo docker exec -it forgejo forgejo'
+alias pihole='sudo docker exec -it pihole pihole'

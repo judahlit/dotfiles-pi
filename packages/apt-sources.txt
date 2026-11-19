@@ -3,3 +3,4 @@
 # /etc/apt/sources.list.d/, and signed-by sets where the key goes.
 
 tailscale  https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg  deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian trixie main
+docker     https://download.docker.com/linux/debian/gpg  deb [signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable

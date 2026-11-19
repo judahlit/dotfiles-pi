@@ -1,0 +1,21 @@
+# Pi-hole, the tailnet's DNS server. Its settings, block lists and query log are in /srv/pihole.
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    ports:
+      # DNS on every interface: the tailnet now, and the home network later.
+      - 53:53/tcp
+      - 53:53/udp
+      # The web page, which Tailscale Serve publishes to the tailnet over HTTPS.
+      - 127.0.0.1:8080:80/tcp
+    environment:
+      # Queries reach the container from outside its own subnet, which the default mode refuses.
+      FTLCONF_dns_listeningMode: ALL
+      # Quad9, filtered, with DNSSEC.
+      FTLCONF_dns_upstreams: 9.9.9.9;149.112.112.112
+      FTLCONF_dns_dnssec: "true"
+    volumes:
+      - /srv/pihole:/etc/pihole
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
