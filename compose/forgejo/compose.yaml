@@ -21,6 +21,7 @@ services:
       # scripts/services.sh creates this file. Forgejo makes its other secrets itself.
       FORGEJO__security__SECRET_KEY_URI: file:/var/lib/gitea/secret_key
       FORGEJO__service__DISABLE_REGISTRATION: "true"
+      FORGEJO__repository__DEFAULT_BRANCH: "master"
     volumes:
       - /srv/forgejo:/var/lib/gitea
       - /etc/localtime:/etc/localtime:ro
