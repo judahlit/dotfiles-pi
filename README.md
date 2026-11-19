@@ -79,13 +79,53 @@ folder with GNU Stow. The Pi runs Raspberry Pi OS Lite (64-bit), which is based 
     command="rrsync -ro /srv/backup",restrict <the PC's key>
     ```
 
+## Restore on a fresh install
+
+In short: follow install steps 1 to 5, copy the latest nightly copy from the PC to the Pi,
+and run `scripts/restore.sh`. It replaces install steps 6, 7, 9 and 10. Then do install
+step 8 again.
+
+1. In the Tailscale admin console, remove the old Pi from the machines, so that the new
+   Pi gets the name `pi` again. Forgejo's addresses and the PC's backup use that name.
+2. The new Pi has a new host key, so SSH refuses it until you remove the old one. On the
+   laptop:
+   ```sh
+   ssh-keygen -R 192.168.0.121
+   ssh-keygen -R pi.tail87bfdc.ts.net
+   ```
+   On the PC, run only `ssh-keygen -R pi.tail87bfdc.ts.net`. Its backup then learns the new
+   key by itself.
+3. Follow install steps 1 to 5.
+4. Copy the nightly copy from the PC's `~/Raspberry Pi Data` to the Pi. From the laptop,
+   `scp -3` copies between the two other machines through the laptop:
+   ```sh
+   scp -3 -r "pc:Raspberry Pi Data" pi:restore
+   ```
+5. Restore the copy:
+   ```sh
+   ~/dotfiles-pi/scripts/restore.sh ~/restore
+   ```
+   The script stops before it changes anything if `/srv/forgejo` exists or a file is
+   missing. Then, in this order, it:
+   - unpacks Forgejo's archive into `/srv/forgejo`: the repositories, the account, the
+     settings and the secret key. This replaces install step 9.
+   - runs `services-up`, which starts Forgejo with that data, starts Pi-hole, publishes
+     both on the tailnet, and installs the nightly backup. This is install step 6.
+   - imports Pi-hole's export: its settings, block lists and web password, and restarts
+     Pi-hole. This replaces install step 7.
+   - puts back `pc.wol`, and replaces `~/.ssh/authorized_keys` with the saved one, which
+     holds the PC's backup key. This replaces install step 10.
+6. Follow install step 8. Tailscale gives the new Pi a new address, so replace the
+   nameserver in the admin console with the address that `tailscale ip -4` prints.
+7. Remove the copy: `rm -r ~/restore`.
+
 ## Maintenance
 
 After a change to `home/`, run `run-stow` to link new files. `update` upgrades the
 apt packages, but not the containers.
 
 Each service in `compose/` has its settings in its `compose.yaml`, and its data in
-`/srv/<service>`. `scripts/backup.sh` says how to restore the nightly copy of that data.
+`/srv/<service>`. A nightly copy of that data goes to the PC (step 10).
 `services-up` updates the services to their newest images, and applies a change to a
 `compose.yaml`. Forgejo follows its LTS series, with security fixes until
 15 July 2027. Before that date, change its image tag in `compose/forgejo/compose.yaml` to
